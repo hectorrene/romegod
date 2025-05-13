@@ -4,16 +4,13 @@
     <!-- Metadatos básicos -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comedor - Reportes</title>
+    <title>Comedor - Registrar Consumo</title>
     
     <!-- CDN de Tailwind CSS para estilos -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- CDN de Flowbite para componentes UI -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
-    
-    <!-- Chart.js para gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Configuración personalizada de Tailwind con colores elegantes -->
     <script>
@@ -93,17 +90,18 @@
             transition: all 0.3s ease;
         }
         
-        /* Estilos para las tarjetas de gráficos */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
+        /* Animación de pulso para el botón de búsqueda */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
         }
         
-        /* Animación para los botones de exportación */
-        .btn-export:hover svg {
-            transform: translateY(-2px);
-            transition: transform 0.2s ease;
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
     </style>
 </head>
@@ -137,12 +135,12 @@
                     <li>
                         <a href="register-employee.html" class="block py-2 px-3 text-gray-300 rounded hover:bg-dark-700 md:hover:bg-transparent md:border-0 md:hover:text-gold-400 md:p-0 transition-all">Registrar Empleado</a>
                     </li>
-                    <li>
-                        <a href="register-consumption.html" class="block py-2 px-3 text-gray-300 rounded hover:bg-dark-700 md:hover:bg-transparent md:border-0 md:hover:text-gold-400 md:p-0 transition-all">Registrar Consumo</a>
-                    </li>
                     <!-- Elemento activo del menú -->
                     <li>
-                        <a href="reports.html" class="block py-2 px-3 text-white bg-gold-600 rounded md:bg-transparent md:text-gold-400 md:p-0" aria-current="page">Reportes</a>
+                        <a href="register-consumption.html" class="block py-2 px-3 text-white bg-gold-600 rounded md:bg-transparent md:text-gold-400 md:p-0" aria-current="page">Registrar Consumo</a>
+                    </li>
+                    <li>
+                        <a href="reports.html" class="block py-2 px-3 text-gray-300 rounded hover:bg-dark-700 md:hover:bg-transparent md:border-0 md:hover:text-gold-400 md:p-0 transition-all">Reportes</a>
                     </li>
                 </ul>
             </div>
@@ -153,678 +151,299 @@
     <div class="container mx-auto p-6">
         <!-- Encabezado de la sección -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold mb-2 text-white">Reportes de Consumo</h1>
-            <p class="text-gray-400">Analiza y exporta los datos de consumo del comedor</p>
+            <h1 class="text-3xl font-bold mb-2 text-white">Registrar Consumo</h1>
+            <p class="text-gray-400">Registra el consumo de alimentos de un empleado</p>
         </div>
         
-        <!-- Selector de mes -->
-        <div class="max-w-md mx-auto mb-8 bg-dark-800 rounded-xl shadow-lg overflow-hidden border border-dark-700">
-            <div class="p-5">
-                <label for="month-select" class="block mb-2 text-sm font-medium text-gray-300">Seleccionar Período</label>
-                <select id="month-select" class="bg-dark-700 border border-dark-600 text-white text-sm rounded-lg focus:ring-gold-500 focus:border-gold-500 block w-full p-3">
-                    <!-- Se llenará dinámicamente con JavaScript -->
-                    <option value="" disabled selected>Cargando períodos disponibles...</option>
-                </select>
-                <p class="mt-2 text-xs text-gray-500">Selecciona un mes para ver los reportes correspondientes</p>
-            </div>
-        </div>
-        
-        <!-- Tarjetas de resumen -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Tarjeta: Total de Consumos -->
-            <div class="bg-dark-800 rounded-xl shadow-lg overflow-hidden border border-dark-700">
-                <div class="p-5">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-lg font-semibold text-gray-300">Total de Consumos</h3>
-                        <span class="bg-blue-900/30 text-blue-400 p-2 rounded-lg">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
-                            </svg>
-                        </span>
-                    </div>
-                    <p id="total-consumptions" class="text-4xl font-bold text-white">0</p>
-                    <p class="text-gray-500 text-sm mt-2">Registros en el período seleccionado</p>
-                </div>
+        <!-- Tarjeta del formulario de registro de consumo -->
+        <div class="max-w-2xl mx-auto bg-dark-800 rounded-xl shadow-xl overflow-hidden border border-dark-700">
+            <!-- Encabezado de la tarjeta -->
+            <div class="p-6 border-b border-dark-700">
+                <h2 class="text-xl font-semibold text-white">Registro de Consumo</h2>
+                <p class="text-gray-400 text-sm mt-1">Busca al empleado por su número y registra su consumo</p>
             </div>
             
-            <!-- Tarjeta: Empleados Atendidos -->
-            <div class="bg-dark-800 rounded-xl shadow-lg overflow-hidden border border-dark-700">
-                <div class="p-5">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-lg font-semibold text-gray-300">Empleados Atendidos</h3>
-                        <span class="bg-emerald-900/30 text-emerald-400 p-2 rounded-lg">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
-                            </svg>
-                        </span>
-                    </div>
-                    <p id="total-employees" class="text-4xl font-bold text-white">0</p>
-                    <p class="text-gray-500 text-sm mt-2">Empleados únicos con consumos</p>
-                </div>
-            </div>
-            
-            <!-- Tarjeta: Tipo de Comida más Popular -->
-            <div class="bg-dark-800 rounded-xl shadow-lg overflow-hidden border border-dark-700">
-                <div class="p-5">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-lg font-semibold text-gray-300">Comida más Popular</h3>
-                        <span class="bg-gold-900/30 text-gold-400 p-2 rounded-lg">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"></path>
-                            </svg>
-                        </span>
-                    </div>
-                    <p id="popular-meal" class="text-4xl font-bold text-white">-</p>
-                    <p class="text-gray-500 text-sm mt-2">Tipo de comida más consumido</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Gráficos -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <!-- Gráfico: Consumos por Tipo de Comida -->
-            <div class="bg-dark-800 rounded-xl shadow-lg overflow-hidden border border-dark-700">
-                <div class="p-5 border-b border-dark-700">
-                    <h3 class="text-lg font-semibold text-white">Consumos por Tipo de Comida</h3>
-                    <p class="text-gray-400 text-sm mt-1">Distribución de consumos según el tipo de alimento</p>
-                </div>
-                <div class="p-5">
-                    <div class="chart-container">
-                        <canvas id="meal-type-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Gráfico: Consumos por Día -->
-            <div class="bg-dark-800 rounded-xl shadow-lg overflow-hidden border border-dark-700">
-                <div class="p-5 border-b border-dark-700">
-                    <h3 class="text-lg font-semibold text-white">Consumos por Día</h3>
-                    <p class="text-gray-400 text-sm mt-1">Tendencia de consumos a lo largo del mes</p>
-                </div>
-                <div class="p-5">
-                    <div class="chart-container">
-                        <canvas id="daily-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tabla de consumos -->
-        <div class="bg-dark-800 rounded-xl shadow-lg overflow-hidden border border-dark-700 mb-8">
-            <div class="p-5 border-b border-dark-700 flex justify-between items-center">
+            <!-- Formulario de registro de consumo -->
+            <form id="consumption-form" class="p-6 space-y-6">
+                <!-- Campo: Búsqueda de empleado por número -->
                 <div>
-                    <h3 class="text-lg font-semibold text-white">Detalle de Consumos</h3>
-                    <p class="text-gray-400 text-sm mt-1">Registro detallado de todos los consumos del período</p>
+                    <label for="employee-number-search" class="block mb-2 text-sm font-medium text-gray-300">
+                        Número de Empleado <span class="text-gold-400">*</span>
+                    </label>
+                    <div class="flex">
+                        <input type="text" id="employee-number-search" 
+                            class="bg-dark-700 border border-dark-600 text-white text-sm rounded-lg focus:ring-gold-500 focus:border-gold-500 block w-full p-3 placeholder-gray-500" 
+                            placeholder="Ej. E12345" 
+                            required>
+                        <button type="button" id="search-employee-btn" 
+                            class="ml-2 text-white bg-gold-600 hover:bg-gold-700 focus:ring-4 focus:outline-none focus:ring-gold-800 font-medium rounded-lg text-sm px-5 py-3 text-center transition-all">
+                            <span>Buscar</span>
+                        </button>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500" id="search-hint">Ingresa el número de empleado para buscarlo en el sistema</p>
                 </div>
-                <!-- Botones de exportación -->
-                <div class="flex space-x-2">
-                    <button id="export-csv" class="btn-export text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center transition-all">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                        CSV
-                    </button>
-                    <button id="print-report" class="btn-export text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-800 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center transition-all">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd"></path>
-                        </svg>
-                        Imprimir
+                
+                <!-- Información del empleado (inicialmente oculta) -->
+                <div id="employee-info" class="hidden">
+                    <div class="flex items-center space-x-4 p-5 bg-dark-700 rounded-lg border border-dark-600">
+                        <!-- Foto del empleado -->
+                        <div id="employee-photo-container" class="flex-shrink-0">
+                            <img id="employee-photo-display" class="w-20 h-20 rounded-full object-cover border-2 border-gold-600" src="/placeholder.svg" alt="Foto del empleado">
+                        </div>
+                        <!-- Datos del empleado -->
+                        <div class="flex-1 min-w-0">
+                            <p class="text-lg font-medium text-white truncate">
+                                <span id="employee-name-display">Nombre del empleado</span>
+                            </p>
+                            <div class="flex items-center mt-1">
+                                <span class="bg-dark-600 text-gray-300 text-xs font-medium px-2.5 py-0.5 rounded-full mr-2">
+                                    <span id="employee-id-display">ID</span>
+                                </span>
+                                <span class="bg-gold-900 text-gold-300 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                    <span id="employee-department-display">Departamento</span>
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Indicador de empleado encontrado -->
+                        <div class="flex-shrink-0">
+                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-900 text-emerald-300">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Selección de tipo de comida (inicialmente oculta) -->
+                <div id="meal-selection" class="hidden space-y-6">
+                    <div>
+                        <label for="meal-type" class="block mb-2 text-sm font-medium text-gray-300">
+                            Tipo de Comida <span class="text-gold-400">*</span>
+                        </label>
+                        <select id="meal-type" 
+                            class="bg-dark-700 border border-dark-600 text-white text-sm rounded-lg focus:ring-gold-500 focus:border-gold-500 block w-full p-3" 
+                            required>
+                            <option value="" selected disabled>Seleccionar tipo de comida</option>
+                            <option value="Desayuno">Desayuno</option>
+                            <option value="Comida">Comida</option>
+                            <option value="Cena">Cena</option>
+                            <option value="Snack">Snack</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Botón para registrar el consumo -->
+                    <button type="submit" id="register-consumption-btn" 
+                        class="w-full text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-800 font-medium rounded-lg text-sm px-5 py-3 text-center transition-all">
+                        Registrar Consumo
                     </button>
                 </div>
-            </div>
-            <div class="relative overflow-x-auto">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-300">
-                    <thead class="text-xs uppercase bg-dark-700 text-gray-400">
-                        <tr>
-                            <th scope="col" class="px-6 py-4">Fecha</th>
-                            <th scope="col" class="px-6 py-4">Empleado</th>
-                            <th scope="col" class="px-6 py-4">Número</th>
-                            <th scope="col" class="px-6 py-4">Tipo de Comida</th>
-                        </tr>
-                    </thead>
-                    <tbody id="consumption-table-body">
-                        <!-- Se llenará dinámicamente con JavaScript -->
-                        <tr>
-                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
-                                <div class="flex flex-col items-center">
-                                    <svg class="w-8 h-8 mb-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    <span>Cargando datos...</span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                
+                <!-- Mensaje de error (inicialmente oculto) -->
+                <div id="error-message" class="hidden p-4 mb-4 text-sm rounded-lg bg-red-900 text-red-300" role="alert">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-red-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="font-medium mr-1">Error:</span> 
+                        <span id="error-text">Empleado no encontrado.</span>
+                    </div>
+                </div>
+                
+                <!-- Mensaje de éxito (inicialmente oculto) -->
+                <div id="success-message" class="hidden p-4 mb-4 text-sm rounded-lg bg-emerald-900 text-emerald-300" role="alert">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-emerald-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="font-medium mr-1">Éxito:</span>
+                        <span id="success-text">Consumo registrado correctamente.</span>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Pie de la tarjeta con información adicional -->
             <div class="p-4 bg-dark-800 border-t border-dark-700 text-sm text-gray-400">
-                <p id="table-info">Selecciona un período para ver los detalles de consumo.</p>
+                <p>Para registrar un consumo, primero debes buscar al empleado por su número.</p>
             </div>
         </div>
     </div>
 
-    <!-- Script para manejar los reportes -->
+    <!-- Script para manejar el formulario -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Referencias a elementos del DOM
-            const monthSelect = document.getElementById('month-select');
-            const totalConsumptionsEl = document.getElementById('total-consumptions');
-            const totalEmployeesEl = document.getElementById('total-employees');
-            const popularMealEl = document.getElementById('popular-meal');
-            const consumptionTableBody = document.getElementById('consumption-table-body');
-            const tableInfo = document.getElementById('table-info');
-            const exportCsvBtn = document.getElementById('export-csv');
-            const printReportBtn = document.getElementById('print-report');
+            const searchBtn = document.getElementById('search-employee-btn');
+            const employeeNumberInput = document.getElementById('employee-number-search');
+            const employeeInfo = document.getElementById('employee-info');
+            const mealSelection = document.getElementById('meal-selection');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            const successMessage = document.getElementById('success-message');
+            const successText = document.getElementById('success-text');
+            const employeeNameDisplay = document.getElementById('employee-name-display');
+            const employeeIdDisplay = document.getElementById('employee-id-display');
+            const employeeDepartmentDisplay = document.getElementById('employee-department-display');
+            const employeePhotoDisplay = document.getElementById('employee-photo-display');
+            const consumptionForm = document.getElementById('consumption-form');
+            const searchHint = document.getElementById('search-hint');
             
-            // Variables para los gráficos
-            let mealTypeChart;
-            let dailyChart;
+            // Variable para almacenar el empleado actual
+            let currentEmployee = null;
             
-            // Configuración de colores para los gráficos
-            const chartColors = {
-                backgroundColor: [
-                    'rgba(16, 185, 129, 0.7)',  // Emerald
-                    'rgba(234, 179, 8, 0.7)',   // Gold
-                    'rgba(59, 130, 246, 0.7)',  // Blue
-                    'rgba(139, 92, 246, 0.7)'   // Purple
-                ],
-                borderColor: [
-                    'rgba(16, 185, 129, 1)',
-                    'rgba(234, 179, 8, 1)',
-                    'rgba(59, 130, 246, 1)',
-                    'rgba(139, 92, 246, 1)'
-                ]
-            };
-            
-            // Configuración global de Chart.js para tema oscuro
-            Chart.defaults.color = '#94a3b8';
-            Chart.defaults.borderColor = '#334155';
-            
-            // Obtener datos de localStorage
-            const consumptions = JSON.parse(localStorage.getItem('consumptions')) || [];
-            
-            // Si no hay consumos, mostrar mensaje
-            if (consumptions.length === 0) {
-                // Actualizar tabla
-                consumptionTableBody.innerHTML = `
-                    <tr class="bg-dark-800 border-b border-dark-700">
-                        <td colspan="4" class="px-6 py-10 text-center">
-                            <div class="flex flex-col items-center text-gray-500">
-                                <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <p class="text-lg font-medium">No hay consumos registrados</p>
-                                <p class="mt-1">Registra consumos para generar reportes</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+            // Función para mostrar mensaje de error
+            function showError(message) {
+                // Ocultar mensaje de éxito si está visible
+                successMessage.classList.add('hidden');
                 
-                // Actualizar selector de meses
-                monthSelect.innerHTML = `
-                    <option value="" disabled selected>No hay datos disponibles</option>
-                `;
+                // Actualizar y mostrar mensaje de error
+                errorText.textContent = message;
+                errorMessage.classList.remove('hidden');
                 
-                // Actualizar información de la tabla
-                tableInfo.textContent = "No hay datos de consumo disponibles.";
-                
-                // Deshabilitar botones de exportación
-                exportCsvBtn.disabled = true;
-                exportCsvBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                printReportBtn.disabled = true;
-                printReportBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                
-                return;
+                // Ocultar automáticamente después de 5 segundos
+                setTimeout(() => {
+                    errorMessage.classList.add('hidden');
+                }, 5000);
             }
             
-            // Llenar selector de meses
-            const months = {};
-            consumptions.forEach(consumption => {
-                const date = new Date(consumption.timestamp);
-                const monthYear = `${date.getFullYear()}-${date.getMonth() + 1}`;
-                const monthName = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-                months[monthYear] = monthName;
-            });
-            
-            // Ordenar meses (más reciente primero)
-            const sortedMonths = Object.keys(months).sort().reverse();
-            
-            // Actualizar selector de meses
-            monthSelect.innerHTML = '';
-            sortedMonths.forEach(monthKey => {
-                const option = document.createElement('option');
-                option.value = monthKey;
-                option.textContent = months[monthKey];
-                monthSelect.appendChild(option);
-            });
-            
-            // Función para actualizar los reportes
-            function updateReports() {
-                const selectedMonth = monthSelect.value;
-                const [year, month] = selectedMonth.split('-').map(Number);
+            // Función para mostrar mensaje de éxito
+            function showSuccess(message) {
+                // Ocultar mensaje de error si está visible
+                errorMessage.classList.add('hidden');
                 
-                // Filtrar consumos del mes seleccionado
-                const monthConsumptions = consumptions.filter(consumption => {
-                    const date = new Date(consumption.timestamp);
-                    return date.getFullYear() === year && date.getMonth() + 1 === month;
-                });
+                // Actualizar y mostrar mensaje de éxito
+                successText.textContent = message;
+                successMessage.classList.remove('hidden');
                 
-                // Actualizar tarjetas de resumen
-                totalConsumptionsEl.textContent = monthConsumptions.length;
-                
-                // Contar empleados únicos
-                const uniqueEmployees = new Set(monthConsumptions.map(c => c.employeeNumber)).size;
-                totalEmployeesEl.textContent = uniqueEmployees;
-                
-                // Encontrar tipo de comida más popular
-                const mealTypeCounts = {};
-                monthConsumptions.forEach(consumption => {
-                    mealTypeCounts[consumption.mealType] = (mealTypeCounts[consumption.mealType] || 0) + 1;
-                });
-                
-                let popularMeal = '-';
-                let maxCount = 0;
-                
-                for (const [meal, count] of Object.entries(mealTypeCounts)) {
-                    if (count > maxCount) {
-                        maxCount = count;
-                        popularMeal = meal;
-                    }
-                }
-                
-                popularMealEl.textContent = popularMeal;
-                
-                // Actualizar tabla
-                if (monthConsumptions.length === 0) {
-                    consumptionTableBody.innerHTML = `
-                        <tr class="bg-dark-800 border-b border-dark-700">
-                            <td colspan="4" class="px-6 py-10 text-center">
-                                <div class="flex flex-col items-center text-gray-500">
-                                    <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    <p class="text-lg font-medium">No hay consumos en este período</p>
-                                    <p class="mt-1">Selecciona otro período o registra nuevos consumos</p>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                    
-                    tableInfo.textContent = `No hay consumos registrados en ${months[selectedMonth]}.`;
-                } else {
-                    // Ordenar por fecha (más reciente primero)
-                    monthConsumptions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                    
-                    consumptionTableBody.innerHTML = monthConsumptions.map(consumption => {
-                        const date = new Date(consumption.timestamp);
-                        const dateString = date.toLocaleDateString();
-                        const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        
-                        // Determinar el color del tipo de comida
-                        let mealTypeClass = '';
-                        switch(consumption.mealType.toLowerCase()) {
-                            case 'desayuno':
-                                mealTypeClass = 'text-emerald-400';
-                                break;
-                            case 'comida':
-                                mealTypeClass = 'text-gold-400';
-                                break;
-                            case 'cena':
-                                mealTypeClass = 'text-blue-400';
-                                break;
-                            case 'snack':
-                                mealTypeClass = 'text-purple-400';
-                                break;
-                            default:
-                                mealTypeClass = 'text-gray-400';
-                        }
-                        
-                        return `
-                            <tr class="bg-dark-800 border-b border-dark-700 hover:bg-dark-700 transition-all">
-                                <td class="px-6 py-4">${dateString} ${timeString}</td>
-                                <td class="px-6 py-4 font-medium text-white">${consumption.employeeName}</td>
-                                <td class="px-6 py-4">${consumption.employeeNumber}</td>
-                                <td class="px-6 py-4 ${mealTypeClass} font-medium">${consumption.mealType}</td>
-                            </tr>
-                        `;
-                    }).join('');
-                    
-                    tableInfo.textContent = `Mostrando ${monthConsumptions.length} consumos de ${months[selectedMonth]}.`;
-                }
-                
-                // Actualizar gráfico de tipos de comida
-                const mealTypeLabels = Object.keys(mealTypeCounts);
-                const mealTypeData = Object.values(mealTypeCounts);
-                
-                if (mealTypeChart) {
-                    mealTypeChart.destroy();
-                }
-                
-                const mealTypeCtx = document.getElementById('meal-type-chart').getContext('2d');
-                mealTypeChart = new Chart(mealTypeCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: mealTypeLabels,
-                        datasets: [{
-                            data: mealTypeData,
-                            backgroundColor: chartColors.backgroundColor,
-                            borderColor: chartColors.borderColor,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    usePointStyle: true,
-                                    pointStyle: 'circle'
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: '#1e293b',
-                                titleColor: '#ffffff',
-                                bodyColor: '#e2e8f0',
-                                borderColor: '#334155',
-                                borderWidth: 1,
-                                padding: 12,
-                                displayColors: true,
-                                usePointStyle: true
-                            }
-                        }
-                    }
-                });
-                
-                // Actualizar gráfico de consumos diarios
-                const dailyCounts = {};
-                
-                monthConsumptions.forEach(consumption => {
-                    const date = new Date(consumption.timestamp);
-                    const day = date.getDate();
-                    dailyCounts[day] = (dailyCounts[day] || 0) + 1;
-                });
-                
-                // Ordenar días
-                const sortedDays = Object.keys(dailyCounts).sort((a, b) => a - b);
-                const dailyData = sortedDays.map(day => dailyCounts[day]);
-                
-                if (dailyChart) {
-                    dailyChart.destroy();
-                }
-                
-                const dailyCtx = document.getElementById('daily-chart').getContext('2d');
-                dailyChart = new Chart(dailyCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: sortedDays.map(day => `Día ${day}`),
-                        datasets: [{
-                            label: 'Consumos',
-                            data: dailyData,
-                            backgroundColor: 'rgba(234, 179, 8, 0.7)',
-                            borderColor: 'rgba(234, 179, 8, 1)',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                },
-                                grid: {
-                                    color: 'rgba(51, 65, 85, 0.5)'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    color: 'rgba(51, 65, 85, 0.5)'
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                backgroundColor: '#1e293b',
-                                titleColor: '#ffffff',
-                                bodyColor: '#e2e8f0',
-                                borderColor: '#334155',
-                                borderWidth: 1,
-                                padding: 12
-                            }
-                        }
-                    }
-                });
+                // Ocultar automáticamente después de 5 segundos
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 5000);
             }
             
-            // Evento de cambio de mes
-            monthSelect.addEventListener('change', updateReports);
-            
-            // Exportar a CSV
-            exportCsvBtn.addEventListener('click', function() {
-                const selectedMonth = monthSelect.value;
-                const [year, month] = selectedMonth.split('-').map(Number);
+            // Función para buscar empleado
+            function searchEmployee() {
+                // Obtener el número de empleado ingresado
+                const employeeNumber = employeeNumberInput.value.trim();
                 
-                // Filtrar consumos del mes seleccionado
-                const monthConsumptions = consumptions.filter(consumption => {
-                    const date = new Date(consumption.timestamp);
-                    return date.getFullYear() === year && date.getMonth() + 1 === month;
-                });
+                // Validar que se haya ingresado un número
+                if (!employeeNumber) {
+                    showError('Por favor, ingrese un número de empleado.');
+                    return;
+                }
                 
-                // Ordenar por fecha (más reciente primero)
-                monthConsumptions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                // Mostrar estado de búsqueda
+                searchBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Buscando...';
+                searchBtn.disabled = true;
                 
-                // Crear contenido CSV
-                let csvContent = "data:text/csv;charset=utf-8,";
-                csvContent += "Fecha,Hora,Empleado,Número,Tipo de Comida\n";
-                
-                monthConsumptions.forEach(consumption => {
-                    const date = new Date(consumption.timestamp);
-                    const dateString = date.toLocaleDateString();
-                    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                // Simular búsqueda (en una aplicación real, esto sería una llamada a la API)
+                setTimeout(() => {
+                    // Buscar en localStorage
+                    const employees = JSON.parse(localStorage.getItem('employees')) || [];
+                    const employee = employees.find(emp => emp.employeeNumber === employeeNumber);
                     
-                    csvContent += `${dateString},${timeString},${consumption.employeeName},${consumption.employeeNumber},${consumption.mealType}\n`;
-                });
+                    // Restaurar botón de búsqueda
+                    searchBtn.innerHTML = 'Buscar';
+                    searchBtn.disabled = false;
+                    
+                    if (employee) {
+                        // Empleado encontrado, mostrar información
+                        currentEmployee = employee;
+                        
+                        // Actualizar la información mostrada
+                        employeeNameDisplay.textContent = employee.employeeName;
+                        employeeIdDisplay.textContent = employee.employeeNumber;
+                        employeeDepartmentDisplay.textContent = employee.department;
+                        
+                        // Actualizar la foto si existe
+                        if (employee.photo) {
+                            employeePhotoDisplay.src = employee.photo;
+                        } else {
+                            employeePhotoDisplay.src = 'https://via.placeholder.com/150?text=' + employee.employeeName.charAt(0);
+                        }
+                        
+                        // Mostrar secciones relevantes
+                        employeeInfo.classList.remove('hidden');
+                        mealSelection.classList.remove('hidden');
+                        errorMessage.classList.add('hidden');
+                        
+                        // Actualizar el texto de ayuda
+                        searchHint.textContent = 'Empleado encontrado. Ahora selecciona el tipo de comida.';
+                        
+                        // Enfocar el selector de tipo de comida
+                        document.getElementById('meal-type').focus();
+                    } else {
+                        // Empleado no encontrado, mostrar error
+                        showError('Empleado no encontrado. Verifique el número de empleado.');
+                        employeeInfo.classList.add('hidden');
+                        mealSelection.classList.add('hidden');
+                        currentEmployee = null;
+                        
+                        // Actualizar el texto de ayuda
+                        searchHint.textContent = 'Intenta con otro número de empleado o registra al empleado primero.';
+                    }
+                }, 1000); // Simular tiempo de búsqueda
+            }
+            
+            // Evento: Clic en el botón de búsqueda
+            searchBtn.addEventListener('click', searchEmployee);
+            
+            // Evento: Presionar Enter en el campo de búsqueda
+            employeeNumberInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchEmployee();
+                }
+            });
+            
+            // Manejar el envío del formulario
+            consumptionForm.addEventListener('submit', function(event) {
+                // Prevenir el comportamiento predeterminado del formulario
+                event.preventDefault();
                 
-                // Crear enlace de descarga
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `reporte-comedor-${selectedMonth}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                // Validar que se haya seleccionado un empleado
+                if (!currentEmployee) {
+                    showError('Por favor, busque un empleado primero.');
+                    return;
+                }
+                
+                // Obtener el tipo de comida seleccionado
+                const mealType = document.getElementById('meal-type').value;
+                
+                // Validar que se haya seleccionado un tipo de comida
+                if (!mealType) {
+                    showError('Por favor, seleccione un tipo de comida.');
+                    return;
+                }
+                
+                // Crear registro de consumo
+                const consumption = {
+                    employeeNumber: currentEmployee.employeeNumber,
+                    employeeName: currentEmployee.employeeName,
+                    mealType: mealType,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Guardar en localStorage
+                const consumptions = JSON.parse(localStorage.getItem('consumptions')) || [];
+                consumptions.push(consumption);
+                localStorage.setItem('consumptions', JSON.stringify(consumptions));
                 
                 // Mostrar mensaje de éxito
-                alert('Archivo CSV descargado correctamente.');
+                showSuccess(`Consumo de ${mealType} registrado para ${currentEmployee.employeeName}`);
+                
+                // Resetear formulario
+                consumptionForm.reset();
+                employeeInfo.classList.add('hidden');
+                mealSelection.classList.add('hidden');
+                currentEmployee = null;
+                
+                // Actualizar el texto de ayuda
+                searchHint.textContent = 'Ingresa el número de empleado para registrar un nuevo consumo.';
+                
+                // Enfocar el campo de búsqueda para un nuevo registro
+                employeeNumberInput.focus();
             });
-            
-            // Imprimir reporte
-            printReportBtn.addEventListener('click', function() {
-                // Preparar contenido para imprimir
-                const selectedMonth = monthSelect.value;
-                const monthName = months[selectedMonth];
-                
-                // Abrir ventana de impresión
-                const printWindow = window.open('', '_blank');
-                
-                // Crear contenido HTML para imprimir
-                printWindow.document.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Reporte de Comedor - ${monthName}</title>
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                margin: 20px;
-                                color: #333;
-                            }
-                            h1 {
-                                color: #1e293b;
-                                text-align: center;
-                                margin-bottom: 20px;
-                            }
-                            .header {
-                                text-align: center;
-                                margin-bottom: 30px;
-                            }
-                            .date {
-                                font-size: 14px;
-                                color: #666;
-                                margin-bottom: 20px;
-                                text-align: center;
-                            }
-                            .summary {
-                                display: flex;
-                                justify-content: space-between;
-                                margin-bottom: 30px;
-                            }
-                            .summary-card {
-                                border: 1px solid #ddd;
-                                border-radius: 8px;
-                                padding: 15px;
-                                width: 30%;
-                                text-align: center;
-                            }
-                            .summary-title {
-                                font-size: 16px;
-                                font-weight: bold;
-                                margin-bottom: 10px;
-                                color: #1e293b;
-                            }
-                            .summary-value {
-                                font-size: 24px;
-                                font-weight: bold;
-                                color: #0f172a;
-                            }
-                            table {
-                                width: 100%;
-                                border-collapse: collapse;
-                                margin-top: 20px;
-                            }
-                            th, td {
-                                border: 1px solid #ddd;
-                                padding: 12px;
-                                text-align: left;
-                            }
-                            th {
-                                background-color: #f8f9fa;
-                                font-weight: bold;
-                                color: #1e293b;
-                            }
-                            tr:nth-child(even) {
-                                background-color: #f2f2f2;
-                            }
-                            .footer {
-                                margin-top: 30px;
-                                text-align: center;
-                                font-size: 12px;
-                                color: #666;
-                            }
-                            @media print {
-                                .no-print {
-                                    display: none;
-                                }
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h1>Reporte de Consumos del Comedor</h1>
-                            <div class="date">Período: ${monthName}</div>
-                        </div>
-                        
-                        <div class="summary">
-                            <div class="summary-card">
-                                <div class="summary-title">Total de Consumos</div>
-                                <div class="summary-value">${totalConsumptionsEl.textContent}</div>
-                            </div>
-                            <div class="summary-card">
-                                <div class="summary-title">Empleados Atendidos</div>
-                                <div class="summary-value">${totalEmployeesEl.textContent}</div>
-                            </div>
-                            <div class="summary-card">
-                                <div class="summary-title">Comida más Popular</div>
-                                <div class="summary-value">${popularMealEl.textContent}</div>
-                            </div>
-                        </div>
-                        
-                        <h2>Detalle de Consumos</h2>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Hora</th>
-                                    <th>Empleado</th>
-                                    <th>Número</th>
-                                    <th>Tipo de Comida</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${getTableRowsForPrint()}
-                            </tbody>
-                        </table>
-                        
-                        <div class="footer">
-                            <p>Reporte generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}</p>
-                            <p>Sistema de Comedor Empresarial</p>
-                        </div>
-                        
-                        <div class="no-print">
-                            <button onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; background-color: #0f172a; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                Imprimir Reporte
-                            </button>
-                        </div>
-                    </body>
-                    </html>
-                `);
-                
-                // Función para generar filas de la tabla para impresión
-                function getTableRowsForPrint() {
-                    const selectedMonth = monthSelect.value;
-                    const [year, month] = selectedMonth.split('-').map(Number);
-                    
-                    // Filtrar consumos del mes seleccionado
-                    const monthConsumptions = consumptions.filter(consumption => {
-                        const date = new Date(consumption.timestamp);
-                        return date.getFullYear() === year && date.getMonth() + 1 === month;
-                    });
-                    
-                    // Ordenar por fecha (más reciente primero)
-                    monthConsumptions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                    
-                    return monthConsumptions.map(consumption => {
-                        const date = new Date(consumption.timestamp);
-                        const dateString = date.toLocaleDateString();
-                        const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        
-                        return `
-                            <tr>
-                                <td>${dateString}</td>
-                                <td>${timeString}</td>
-                                <td>${consumption.employeeName}</td>
-                                <td>${consumption.employeeNumber}</td>
-                                <td>${consumption.mealType}</td>
-                            </tr>
-                        `;
-                    }).join('');
-                }
-                
-                printWindow.document.close();
-            });
-            
-            // Inicializar reportes con el primer mes
-            if (sortedMonths.length > 0) {
-                updateReports();
-            }
         });
     </script>
 
