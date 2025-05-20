@@ -184,7 +184,7 @@
                 </div>
                 
                 <!-- Información del empleado (inicialmente oculta) -->
-                <div id="employee-info" class="hidden">
+                <div id="employee-info" >
                     <div class="flex items-center space-x-4 p-5 bg-dark-700 rounded-lg border border-dark-600">
                         <!-- Foto del empleado -->
                         <div id="employee-photo-container" class="flex-shrink-0">
@@ -216,7 +216,7 @@
                 </div>
                 
                 <!-- Selección de tipo de comida (inicialmente oculta) -->
-                <div id="meal-selection" class="hidden space-y-6">
+                <div id="meal-selection" class="space-y-6">
                     <div>
                         <label for="meal-type" class="block mb-2 text-sm font-medium text-gray-300">
                             Tipo de Comida <span class="text-gold-400">*</span>
@@ -268,184 +268,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Script para manejar el formulario -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Referencias a elementos del DOM
-            const searchBtn = document.getElementById('search-employee-btn');
-            const employeeNumberInput = document.getElementById('employee-number-search');
-            const employeeInfo = document.getElementById('employee-info');
-            const mealSelection = document.getElementById('meal-selection');
-            const errorMessage = document.getElementById('error-message');
-            const errorText = document.getElementById('error-text');
-            const successMessage = document.getElementById('success-message');
-            const successText = document.getElementById('success-text');
-            const employeeNameDisplay = document.getElementById('employee-name-display');
-            const employeeIdDisplay = document.getElementById('employee-id-display');
-            const employeeDepartmentDisplay = document.getElementById('employee-department-display');
-            const employeePhotoDisplay = document.getElementById('employee-photo-display');
-            const consumptionForm = document.getElementById('consumption-form');
-            const searchHint = document.getElementById('search-hint');
-            
-            // Variable para almacenar el empleado actual
-            let currentEmployee = null;
-            
-            // Función para mostrar mensaje de error
-            function showError(message) {
-                // Ocultar mensaje de éxito si está visible
-                successMessage.classList.add('hidden');
-                
-                // Actualizar y mostrar mensaje de error
-                errorText.textContent = message;
-                errorMessage.classList.remove('hidden');
-                
-                // Ocultar automáticamente después de 5 segundos
-                setTimeout(() => {
-                    errorMessage.classList.add('hidden');
-                }, 5000);
-            }
-            
-            // Función para mostrar mensaje de éxito
-            function showSuccess(message) {
-                // Ocultar mensaje de error si está visible
-                errorMessage.classList.add('hidden');
-                
-                // Actualizar y mostrar mensaje de éxito
-                successText.textContent = message;
-                successMessage.classList.remove('hidden');
-                
-                // Ocultar automáticamente después de 5 segundos
-                setTimeout(() => {
-                    successMessage.classList.add('hidden');
-                }, 5000);
-            }
-            
-            // Función para buscar empleado
-            function searchEmployee() {
-                // Obtener el número de empleado ingresado
-                const employeeNumber = employeeNumberInput.value.trim();
-                
-                // Validar que se haya ingresado un número
-                if (!employeeNumber) {
-                    showError('Por favor, ingrese un número de empleado.');
-                    return;
-                }
-                
-                // Mostrar estado de búsqueda
-                searchBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Buscando...';
-                searchBtn.disabled = true;
-                
-                // Simular búsqueda (en una aplicación real, esto sería una llamada a la API)
-                setTimeout(() => {
-                    // Buscar en localStorage
-                    const employees = JSON.parse(localStorage.getItem('employees')) || [];
-                    const employee = employees.find(emp => emp.employeeNumber === employeeNumber);
-                    
-                    // Restaurar botón de búsqueda
-                    searchBtn.innerHTML = 'Buscar';
-                    searchBtn.disabled = false;
-                    
-                    if (employee) {
-                        // Empleado encontrado, mostrar información
-                        currentEmployee = employee;
-                        
-                        // Actualizar la información mostrada
-                        employeeNameDisplay.textContent = employee.employeeName;
-                        employeeIdDisplay.textContent = employee.employeeNumber;
-                        employeeDepartmentDisplay.textContent = employee.department;
-                        
-                        // Actualizar la foto si existe
-                        if (employee.photo) {
-                            employeePhotoDisplay.src = employee.photo;
-                        } else {
-                            employeePhotoDisplay.src = 'https://via.placeholder.com/150?text=' + employee.employeeName.charAt(0);
-                        }
-                        
-                        // Mostrar secciones relevantes
-                        employeeInfo.classList.remove('hidden');
-                        mealSelection.classList.remove('hidden');
-                        errorMessage.classList.add('hidden');
-                        
-                        // Actualizar el texto de ayuda
-                        searchHint.textContent = 'Empleado encontrado. Ahora selecciona el tipo de comida.';
-                        
-                        // Enfocar el selector de tipo de comida
-                        document.getElementById('meal-type').focus();
-                    } else {
-                        // Empleado no encontrado, mostrar error
-                        showError('Empleado no encontrado. Verifique el número de empleado.');
-                        employeeInfo.classList.add('hidden');
-                        mealSelection.classList.add('hidden');
-                        currentEmployee = null;
-                        
-                        // Actualizar el texto de ayuda
-                        searchHint.textContent = 'Intenta con otro número de empleado o registra al empleado primero.';
-                    }
-                }, 1000); // Simular tiempo de búsqueda
-            }
-            
-            // Evento: Clic en el botón de búsqueda
-            searchBtn.addEventListener('click', searchEmployee);
-            
-            // Evento: Presionar Enter en el campo de búsqueda
-            employeeNumberInput.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    searchEmployee();
-                }
-            });
-            
-            // Manejar el envío del formulario
-            consumptionForm.addEventListener('submit', function(event) {
-                // Prevenir el comportamiento predeterminado del formulario
-                event.preventDefault();
-                
-                // Validar que se haya seleccionado un empleado
-                if (!currentEmployee) {
-                    showError('Por favor, busque un empleado primero.');
-                    return;
-                }
-                
-                // Obtener el tipo de comida seleccionado
-                const mealType = document.getElementById('meal-type').value;
-                
-                // Validar que se haya seleccionado un tipo de comida
-                if (!mealType) {
-                    showError('Por favor, seleccione un tipo de comida.');
-                    return;
-                }
-                
-                // Crear registro de consumo
-                const consumption = {
-                    employeeNumber: currentEmployee.employeeNumber,
-                    employeeName: currentEmployee.employeeName,
-                    mealType: mealType,
-                    timestamp: new Date().toISOString()
-                };
-                
-                // Guardar en localStorage
-                const consumptions = JSON.parse(localStorage.getItem('consumptions')) || [];
-                consumptions.push(consumption);
-                localStorage.setItem('consumptions', JSON.stringify(consumptions));
-                
-                // Mostrar mensaje de éxito
-                showSuccess(`Consumo de ${mealType} registrado para ${currentEmployee.employeeName}`);
-                
-                // Resetear formulario
-                consumptionForm.reset();
-                employeeInfo.classList.add('hidden');
-                mealSelection.classList.add('hidden');
-                currentEmployee = null;
-                
-                // Actualizar el texto de ayuda
-                searchHint.textContent = 'Ingresa el número de empleado para registrar un nuevo consumo.';
-                
-                // Enfocar el campo de búsqueda para un nuevo registro
-                employeeNumberInput.focus();
-            });
-        });
-    </script>
 
     <!-- Flowbite JS para funcionalidad de componentes UI -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
